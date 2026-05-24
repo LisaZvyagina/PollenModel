@@ -11,7 +11,6 @@ QT_BEGIN_NAMESPACE
 class QSlider;
 class QLabel;
 class QPushButton;
-class QChartView;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -31,7 +30,6 @@ private slots:
 
 private:
     void setupUI();
-    void drawGrid();
     void updateDisplay();
 
     CityGrid* m_cityGrid;
@@ -49,7 +47,7 @@ private:
     QLabel* m_weatherLabel;
 
     int m_currentDay;
-    bool m_isHeatmapMode;   // true = тепловая карта, false = обычный режим (растения/люди)
+    bool m_isHeatmapMode;
 };
 
 #endif // MAINWINDOW_H
