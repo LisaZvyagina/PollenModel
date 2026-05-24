@@ -35,6 +35,12 @@ public:
     void toggleSimulation();
     void reset();
 
+    // НОВЫЕ МЕТОДЫ ДЛЯ УПРАВЛЕНИЯ ИЗ GUI
+    void setRaining(bool rain);
+    void setWindSpeed(double wx, double wy);
+    double getWindSpeedX() const;
+    double getWindSpeedY() const;
+
 private:
     // Обновление движения пыльцы
     void updatePollenMovement();
