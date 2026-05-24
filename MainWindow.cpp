@@ -6,17 +6,12 @@
 #include <QSlider>
 #include <QLabel>
 #include <QGraphicsRectItem>
+#include <QGraphicsEllipseItem>
+#include <QGraphicsTextItem>
 #include <QBrush>
 #include <QPen>
-#include <QPainter>
 #include <QTimer>
 #include <QWidget>
-#include <QChart>
-#include <QChartView>
-#include <QLineSeries>
-#include <QValueAxis>
-
-using namespace QtCharts;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), m_cityGrid(nullptr), m_currentDay(0), m_isHeatmapMode(true)
@@ -66,11 +61,11 @@ void MainWindow::setupUI()
 
     m_windSlider = new QSlider(Qt::Horizontal, this);
     m_windSlider->setRange(0, 200);
-    m_windSlider->setValue(60);  // 0.6 * 100
+    m_windSlider->setValue((int)(m_cityGrid->getWindSpeedX() * 100));
     connect(m_windSlider, &QSlider::valueChanged, this, &MainWindow::onWindSpeedChanged);
     controlLayout->addWidget(m_windSlider);
 
-    m_windLabel = new QLabel("0.60", this);
+    m_windLabel = new QLabel(QString::number(m_cityGrid->getWindSpeedX(), 'f', 2), this);
     controlLayout->addWidget(m_windLabel);
 
     controlLayout->addSpacing(10);
@@ -134,28 +129,14 @@ void MainWindow::onWindSpeedChanged(int value)
 {
     double windSpeed = value / 100.0;
     m_windLabel->setText(QString::number(windSpeed, 'f', 2));
-    // Обновляем ветер в модели (через WindField)
-    // В текущей реализации ветер глобальный, меняем его
-    // Пришлось бы добавить метод setGlobalWind, но для простоты оставим так
-    // Можно добавить метод в CityGrid, но сейчас ветер фиксированный
-    Q_UNUSED(windSpeed);
+    m_cityGrid->setWindSpeed(windSpeed, BASE_WIND_Y);
 }
 
 void MainWindow::onRainToggleClicked()
 {
-    // Переключаем дождь вручную
-    Weather w = m_cityGrid->getWeather();
-    w.setRaining(!w.isRaining());
-    // Так как Weather не хранится по ссылке, нужно добавить метод setWeather
-    // Упростим: создадим новый метод в CityGrid
-    // Пока просто меняем через публичный метод, который нужно добавить
-    // Для простоты я добавлю позже, сейчас оставлю заглушку
-    m_rainBtn->setText(w.isRaining() ? "☁️ Дождь: ВКЛ" : "☁️ Дождь: ВЫКЛ");
-}
-
-void MainWindow::drawGrid()
-{
-    // Рисование реализовано в updateDisplay
+    bool newRain = !m_cityGrid->getWeather().isRaining();
+    m_cityGrid->setRaining(newRain);
+    updateDisplay();  // обновим текст кнопки
 }
 
 void MainWindow::updateDisplay()
