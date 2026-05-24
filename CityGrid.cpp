@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
+#include <algorithm>
 
 CityGrid::CityGrid()
     : m_isRunning(true), m_stepCounter(0)
@@ -55,6 +56,12 @@ void CityGrid::setupDefaultCity()
     for (auto& h : m_humans) {
         h.setTarget(rand() % GRID_WIDTH, rand() % GRID_HEIGHT);
     }
+
+    // Сброс ветра и погоды к стандартным значениям
+    m_wind.setGlobalWind(BASE_WIND_X, BASE_WIND_Y);
+    m_weather.setHumidity(BASE_HUMIDITY);
+    m_weather.setTemperature(20.0);
+    m_weather.setRaining(false);
 }
 
 double CityGrid::getConcentrationAt(int x, int y) const
@@ -77,6 +84,27 @@ const WindField& CityGrid::getWindField() const { return m_wind; }
 
 void CityGrid::toggleSimulation() { m_isRunning = !m_isRunning; }
 void CityGrid::reset() { initialize(); m_stepCounter = 0; }
+
+// НОВЫЕ МЕТОДЫ
+void CityGrid::setRaining(bool rain)
+{
+    m_weather.setRaining(rain);
+}
+
+void CityGrid::setWindSpeed(double wx, double wy)
+{
+    m_wind.setGlobalWind(wx, wy);
+}
+
+double CityGrid::getWindSpeedX() const
+{
+    return m_wind.getGlobalWx();
+}
+
+double CityGrid::getWindSpeedY() const
+{
+    return m_wind.getGlobalWy();
+}
 
 void CityGrid::update(int currentDay)
 {
