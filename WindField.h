@@ -10,6 +10,8 @@ public:
     WindField(double globalWx, double globalWy);
 
     void setGlobalWind(double wx, double wy);
+    double getGlobalWx() const;
+    double getGlobalWy() const;
     QPointF getWindAt(int x, int y) const;
 
 private:
